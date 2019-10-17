@@ -2,9 +2,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import MenuIcon from '@material-ui/icons/Menu';
-import { AppBar, CssBaseline, Divider, Drawer, Hidden, IconButton, Toolbar, Typography, Grid } from '@material-ui/core';
+import { AppBar, CssBaseline, Drawer, Hidden, IconButton, Toolbar, Typography } from '@material-ui/core';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-import {drawerWidth,navbarBGColor,sidebarBGColor} from '../Constants/config';
+import { drawerWidth, navbarBGColor, sidebarBGColor } from '../Constants/config';
 
 function Layout(props) {
 
@@ -19,10 +19,6 @@ function Layout(props) {
 
   const drawer = (
     <div>
-      <Grid className={classes.toolbar} container direction="row" alignItems="center" justify="center">
-        <Typography className={classes.helperText}>Insert batch text here</Typography>
-      </Grid>
-      <Divider />
       {sidebar}
     </div>
   );
@@ -109,13 +105,14 @@ const useStyles = makeStyles(theme => ({
     },
   },
   toolbar: theme.mixins.toolbar,
-  
+
   drawerPaper: {
     width: drawerWidth,
     backgroundColor: sidebarBGColor,
     display: 'flex',
     alignItems: 'center',
-    padding: '50px 5px 0px 5px',
+    justifyContent: 'center',
+    padding: '0px 5px',
   },
   content: {
     flexGrow: 1,

@@ -3,13 +3,15 @@ import styled from 'styled-components';
 import { connect } from "react-redux";
 import ACTIONS from "../Modules/action";
 import { latRegExp, lngRegExp } from '../Constants/config';
-import { Typography } from '@material-ui/core';
+import { Typography, Button, TextField } from '@material-ui/core';
+import DeleteIcon from '@material-ui/icons/Delete';
+import LibraryAddIcon from '@material-ui/icons/LibraryAdd';
 
 const Sidebar = (props) => {
-    const text = React.createRef();
+    const [values, setValues] = React.useState('');
 
     let submitValues = () => {
-        let lines = text.current.value.split('\n');
+        let lines = values.split('\n');
 
         lines.map((line) => {
             let [lat, lng, color] = line.split(',');
@@ -21,44 +23,74 @@ const Sidebar = (props) => {
         })
     }
 
+    let handleChange = (e) => {
+        setValues(e.target.value);
+    }
+
     return (
         <>
-            <CustomTextarea resize="false" placeholder="lat,lng,color" ref={text} />
-            <SubmitButton onClick={submitValues}>Submit</SubmitButton>
-            <RemoveButton onClick={props.removeMarkers}>Remove All Markers</RemoveButton>
-            {props.error && <Typography color="secondary">{props.error}</Typography>}
+            <CustomTextarea
+                label="Batch add"
+                placeholder="lat,lng,color"
+                multiline
+                margin="normal"
+                variant="outlined"
+                rows={10}
+                rowsMax={20}
+                onChange={(e) => handleChange(e)}
+                value={values} />
+            {props.error && <ErrorMessage>{props.error}</ErrorMessage>}
+            <SubmitButton startIcon={<LibraryAddIcon />} variant="contained" color="primary" onClick={submitValues}>Submit List</SubmitButton>
+            <Button startIcon={<DeleteIcon />} variant="contained" color="secondary" onClick={props.removeMarkers}>Delete Markers</Button>
         </>
     );
 };
 
-const CustomTextarea = styled.textarea`
-    width: 100%;
-    height: 300px;
-    background-color: #fff;
-    border: 2px solid #fff;
-    z-index: 500;
-    `;
 
+const ErrorMessage = styled(Typography)`
+    color: #9e1a1a;
+`
+const CustomTextarea = styled(TextField)`
+  width: 220px;
+  textarea {
+      color: #fff !important;
+      font-size: 12px;
+      &::placeholder {
+          color: #ddd;
+      }
+      &::-webkit-scrollbar-track
+        {
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+            border-radius: 10px;
+            background-color: #F5F5F5;
+        }
 
-const SubmitButton = styled.button`
-    border: none;
-    width: 50px;
-    height: 50px;
-    background: #635858;
-    color: #fff;
-    top: 100%;
-    width: 100%;
+      &::-webkit-scrollbar
+        {
+            width: 12px;
+            background-color: #F5F5F5;
+            border-radius: 10px;
+        }
+
+       &::-webkit-scrollbar-thumb
+        {
+            border-radius: 10px;
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+            background-color: #555;
+        }
+  }
+  label {
+      color: #fff;
+  }
+  div {
+      padding: 18.5px 0px 14px 18.5px;
+  }
 `;
 
-const RemoveButton = styled.button`
-    border: none;
-    width: 50px;
-    height: 50px;
-    background: tomato;
-    color: #fff;
-    top: 100%;
-    width: 100%;
+const SubmitButton = styled(Button)`
+ margin-bottom: 10px !important;
 `;
+
 
 const mapStateToProps = state => ({
     error: state.error

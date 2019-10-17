@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import Marker from './Marker';
 import GoogleMapReact from 'google-map-react';
-import { GOOGLE_MAP_API_KEY, center, zoom, defaultOptions } from '../Constants/config'
+import { GOOGLE_MAP_API_KEY, defaultOptions } from '../Constants/config'
 import { connect } from "react-redux";
 import ACTIONS from "../Modules/action";
 
@@ -16,15 +16,26 @@ const Map = (props) => {
         props.createMarker(newMarker);
     }
 
+    let handleDrag = (map) => {
+        let [lat, lng] = [map.center.lat(), map.center.lng()]
+        let center = {
+            lat,
+            lng
+        }
+        props.setCenter(center);
+    }
+
     return (
         <MapContainer>
             <GoogleMapReact
                 bootstrapURLKeys={{ key: GOOGLE_MAP_API_KEY }}
-                defaultCenter={center}
-                defaultZoom={zoom}
+                defaultCenter={props.center}
+                defaultZoom={props.zoom}
                 options={defaultOptions}
                 onClick={handleClick}
                 onChildClick={(i) => props.changeMarker(i)}
+                onDragEnd={(map) => { handleDrag(map) }}
+                onZoomAnimationEnd={(num) => { props.setZoom(num) }}
             >
                 {
                     props.markers.map((marker, i) => {
@@ -50,13 +61,17 @@ height: 100vh;
 `
 
 const mapStateToProps = state => ({
-    markers: state.markers
+    markers: state.markers,
+    center: state.center,
+    zoom: state.zoom
 });
 
 const mapDispatchToProps = dispatch => ({
     createMarker: marker => dispatch(ACTIONS.createMarker(marker)),
     deleteMarker: id => dispatch(ACTIONS.deleteMarker(id)),
-    changeMarker: id => dispatch(ACTIONS.changeMarker(id))
+    changeMarker: id => dispatch(ACTIONS.changeMarker(id)),
+    setZoom: num => dispatch(ACTIONS.setZoom(num)),
+    setCenter: center => dispatch(ACTIONS.setCenter(center)),
 });
 
 export default connect(
